@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import { createConnection } from 'typeorm'
 
 import userRoutes from './routes/userRoutes'
+import tokenRoutes from './routes/tokenRoutes'
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ class App {
 
     private routes (): void {
       this.express.use('/users', userRoutes)
+      this.express.use('/token', tokenRoutes)
     }
 }
 
