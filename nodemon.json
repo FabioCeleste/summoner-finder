@@ -1,0 +1,7 @@
+{
+    "Watch": ["src"],
+    "ext": "ts",
+    "execMap": {
+        "ts": "ts-node src/server.ts"
+    }
+}
