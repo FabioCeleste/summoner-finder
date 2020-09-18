@@ -34,7 +34,7 @@ class UserController {
   async show (req: Request, res: Response) {
     const { id } = req.params
     if (!id) return res.json({ errors: ['Invalid user id'] })
-    const user = await getRepository(Users).findOne(id)
+    const user = await getRepository(Users).findOne(id, { relations: ['summoner'] })
     if (!user) return res.json({ errors: ['User not found'] })
     return res.json(user)
   }

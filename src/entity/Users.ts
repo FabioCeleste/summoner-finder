@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity } from 'typeorm'
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from 'typeorm'
+import { Summoner } from './Summoner'
 
 @Entity()
 export class Users {
@@ -15,6 +16,9 @@ export class Users {
 
     @Column()
     password!:string;
+
+    @OneToMany(type => Summoner, summoner => summoner.users)
+    summoner!: string
 
     @CreateDateColumn()
     created_at!: Date;
