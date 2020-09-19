@@ -4,5 +4,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
-app_1.default.listen(3333);
+app_1.default.listen(process.env.PORT || 3000);
 //# sourceMappingURL=server.js.map
