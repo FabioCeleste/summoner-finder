@@ -39,7 +39,6 @@ class SummonerFinder {
       for (const summoner of match.participants) {
         const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region)
         const champion = await SummonerFinder.getChampion(summoner.championId)
-        console.log(find)
 
         results.push({
           team: summoner.teamId,
