@@ -22,3 +22,16 @@ export interface SummonerBody {
     region: RegionsType
     summoner: string
 }
+
+export interface MatchSummoner {
+    teamId: number
+    spell1Id: number
+    spell2Id: number
+    championId: number
+    summonerName: string
+    summonerId: string
+}
+
+export interface MatchInfo {
+    participants: MatchSummoner[]
+}

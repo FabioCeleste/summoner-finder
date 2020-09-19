@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes'
 import tokenRoutes from './routes/tokenRoutes'
 import summonerRoutes from './routes/summonerRoutes'
 import findRoutes from './routes/findRoutes'
+import champRoutes from './routes/champRoutes'
 
 dotenv.config()
 
@@ -31,6 +32,7 @@ class App {
       this.express.use('/token', tokenRoutes)
       this.express.use('/summoner', summonerRoutes)
       this.express.use('/find', findRoutes)
+      this.express.use('/champ', champRoutes)
     }
 }
 
