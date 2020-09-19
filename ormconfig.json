@@ -1,0 +1,24 @@
+{
+  "type": "postgres",
+  "host": "35.198.24.118",
+  "port": 5432,
+  "username": "postgres",
+  "password": "210500",
+  "database": "lolzin",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+     "dist/entity/**/*.js"
+  ],
+  "migrations": [
+     "dist/migration/**/*.js"
+  ],
+  "subscribers": [
+     "dist/subscriber/**/*.js"
+  ],
+  "cli": {
+     "entitiesDir": "src/entity",
+     "migrationsDir": "src/migration",
+     "subscribersDir": "src/subscriber"
+  }
+}

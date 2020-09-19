@@ -4,12 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const UserController_1 = __importDefault(require("../controllers/UserController"));
+const SummonerController_1 = __importDefault(require("../controllers/SummonerController"));
 const loginRequired_1 = __importDefault(require("../middlewares/loginRequired"));
 const router = express_1.Router();
-router.get('/', loginRequired_1.default, UserController_1.default.index);
-router.get('/show/:id', UserController_1.default.show);
-router.put('/update/:id', UserController_1.default.update);
-router.post('/', UserController_1.default.store);
+router.post('/', loginRequired_1.default, SummonerController_1.default.store);
+router.get('/', loginRequired_1.default, SummonerController_1.default.index);
 exports.default = router;
-//# sourceMappingURL=userRoutes.js.map
+//# sourceMappingURL=summonerRoutes.js.map

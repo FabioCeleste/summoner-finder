@@ -3,10 +3,11 @@ import { Champs } from '../entity/Champions'
 import fs from 'fs'
 import { ChampType } from '../types/Champ'
 import { getRepository } from 'typeorm'
+import { resolve } from 'path'
 
 class ChampController {
   async champs1 (req: Request, res: Response) {
-    fs.readFile('./src/data/champs5.json', (err, data) => {
+    fs.readFile(resolve(__dirname, '..', 'data', 'champs1.json'), (err, data) => {
       if (err) return console.log(err)
       const stringData = data.toString()
       const arrayChampions: ChampType[] = JSON.parse(stringData)

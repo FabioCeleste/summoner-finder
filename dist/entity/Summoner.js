@@ -9,43 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Users = void 0;
+exports.Summoner = void 0;
 const typeorm_1 = require("typeorm");
-const Summoner_1 = require("./Summoner");
-let Users = class Users {
+const Users_1 = require("./Users");
+let Summoner = class Summoner {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Users.prototype, "id", void 0);
+], Summoner.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Users.prototype, "username", void 0);
+], Summoner.prototype, "summoner", void 0);
 __decorate([
-    typeorm_1.Column({
-        unique: true
-    }),
-    __metadata("design:type", String)
-], Users.prototype, "email", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], Users.prototype, "password", void 0);
-__decorate([
-    typeorm_1.OneToMany(type => Summoner_1.Summoner, summoner => summoner.users),
-    __metadata("design:type", String)
-], Users.prototype, "summoner", void 0);
-__decorate([
-    typeorm_1.CreateDateColumn(),
-    __metadata("design:type", Date)
-], Users.prototype, "created_at", void 0);
-__decorate([
-    typeorm_1.UpdateDateColumn(),
-    __metadata("design:type", Date)
-], Users.prototype, "updated_at", void 0);
-Users = __decorate([
+    typeorm_1.ManyToOne(type => Users_1.Users, users => users.summoner),
+    __metadata("design:type", Users_1.Users)
+], Summoner.prototype, "users", void 0);
+Summoner = __decorate([
     typeorm_1.Entity()
-], Users);
-exports.Users = Users;
-//# sourceMappingURL=Users.js.map
+], Summoner);
+exports.Summoner = Summoner;
+//# sourceMappingURL=Summoner.js.map

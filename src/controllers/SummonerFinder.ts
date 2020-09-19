@@ -18,7 +18,6 @@ class SummonerFinder {
     const { region, summoner } = req.body as SummonerBody
     const summonerId = await SummonerFinder.getSummonerId(summoner, region)
     const arrayElo = await SummonerFinder.getSummonerInfo(summonerId, region)
-    console.log(arrayElo)
 
     return res.json({
       summoner: summoner,
@@ -40,6 +39,7 @@ class SummonerFinder {
       for (const summoner of match.participants) {
         const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region)
         const champion = await SummonerFinder.getChampion(summoner.championId)
+        console.log(find)
 
         results.push({
           team: summoner.teamId,
