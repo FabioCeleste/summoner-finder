@@ -7,7 +7,7 @@ import fs from 'fs'
 import { Champs } from '../entity/Champions'
 
 import { RegionsType } from '../types/regions'
-import { MatchInfo, SummonerBody, SummonerStatsData } from '../types/summoner'
+import { MatchInfo, SummonerBody, SummonerId, SummonerStatsData } from '../types/summoner'
 import { getRepository } from 'typeorm'
 import { SummonerSpells } from '../types/spells'
 
@@ -15,14 +15,18 @@ dotenv.config()
 
 class SummonerFinder {
   async show (req: Request, res: Response) {
-    const { region, summoner } = req.body as SummonerBody
-    const summonerId = await SummonerFinder.getSummonerId(summoner, region)
-    const arrayElo = await SummonerFinder.getSummonerInfo(summonerId, region)
+    try {
+      const { region, summoner } = req.body as SummonerBody
+      const summonerId = await SummonerFinder.getSummonerId(summoner, region)
+      const arrayElo = await SummonerFinder.getSummonerInfo(summonerId.id, region)
 
-    return res.json({
-      summoner: summoner,
-      ranked: arrayElo
-    })
+      return res.json({
+        summoner: summonerId,
+        ranked: arrayElo
+      })
+    } catch {
+      return res.json({ errors: ['Invocador não encontrado'] })
+    }
   }
 
   async match (req: Request, res: Response) {
@@ -34,23 +38,28 @@ class SummonerFinder {
       const results = []
       const { region, summoner } = req.body as SummonerBody
       const summonerId = await SummonerFinder.getSummonerId(summoner, region)
-      const match = await SummonerFinder.getMatch(summonerId, region)
+      try {
+        const match = await SummonerFinder.getMatch(summonerId.id, region)
 
-      for (const summoner of match.participants) {
-        const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region)
-        const champion = await SummonerFinder.getChampion(summoner.championId)
+        for (const summoner of match.participants) {
+          const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region)
+          const champion = await SummonerFinder.getChampion(summoner.championId)
 
-        results.push({
-          team: summoner.teamId,
-          summonerName: summoner.summonerName,
-          spell1: spellsObj[summoner.spell1Id.toString()],
-          spell2: spellsObj[summoner.spell2Id.toString()],
-          ranked: find,
-          champion
-        })
+          results.push({
+            id: summoner.id,
+            profileIconId: summoner.profileIconId,
+            summonerName: summoner.summonerName,
+            team: summoner.teamId,
+            spell1: spellsObj[summoner.spell1Id.toString()],
+            spell2: spellsObj[summoner.spell2Id.toString()],
+            ranked: find,
+            champion
+          })
+        }
+        return res.json({ results })
+      } catch {
+        return res.json({ errors: ['Invocador não esta em partida'] })
       }
-
-      return res.json({ results })
     })
   }
 
@@ -60,9 +69,15 @@ class SummonerFinder {
         'X-Riot-Token': process.env.RIOTKEY as string
       }
     })
-    const findSummonerData = findSummoner.data
+    const findSummonerData: SummonerId = findSummoner.data
 
-    return findSummonerData.id
+    const summonerId = {
+      id: findSummonerData.id,
+      name: findSummonerData.name,
+      profileIcon: findSummonerData.profileIconId
+    }
+
+    return summonerId
   }
 
   static async getSummonerInfo (summonerId: string, region: RegionsType) {

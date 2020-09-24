@@ -12,13 +12,18 @@ const typeorm_1 = require("typeorm");
 dotenv_1.default.config();
 class SummonerFinder {
     async show(req, res) {
-        const { region, summoner } = req.body;
-        const summonerId = await SummonerFinder.getSummonerId(summoner, region);
-        const arrayElo = await SummonerFinder.getSummonerInfo(summonerId, region);
-        return res.json({
-            summoner: summoner,
-            ranked: arrayElo
-        });
+        try {
+            const { region, summoner } = req.body;
+            const summonerId = await SummonerFinder.getSummonerId(summoner, region);
+            const arrayElo = await SummonerFinder.getSummonerInfo(summonerId.id, region);
+            return res.json({
+                summoner: summonerId,
+                ranked: arrayElo
+            });
+        }
+        catch {
+            return res.json({ errors: ['Invocador não encontrado'] });
+        }
     }
     async match(req, res) {
         fs_1.default.readFile(path_1.resolve(__dirname, '..', 'data', 'spells.json'), async (err, data) => {
@@ -29,20 +34,27 @@ class SummonerFinder {
             const results = [];
             const { region, summoner } = req.body;
             const summonerId = await SummonerFinder.getSummonerId(summoner, region);
-            const match = await SummonerFinder.getMatch(summonerId, region);
-            for (const summoner of match.participants) {
-                const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region);
-                const champion = await SummonerFinder.getChampion(summoner.championId);
-                results.push({
-                    team: summoner.teamId,
-                    summonerName: summoner.summonerName,
-                    spell1: spellsObj[summoner.spell1Id.toString()],
-                    spell2: spellsObj[summoner.spell2Id.toString()],
-                    ranked: find,
-                    champion
-                });
+            try {
+                const match = await SummonerFinder.getMatch(summonerId.id, region);
+                for (const summoner of match.participants) {
+                    const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region);
+                    const champion = await SummonerFinder.getChampion(summoner.championId);
+                    results.push({
+                        id: summoner.id,
+                        profileIconId: summoner.profileIconId,
+                        summonerName: summoner.summonerName,
+                        team: summoner.teamId,
+                        spell1: spellsObj[summoner.spell1Id.toString()],
+                        spell2: spellsObj[summoner.spell2Id.toString()],
+                        ranked: find,
+                        champion
+                    });
+                }
+                return res.json({ results });
             }
-            return res.json({ results });
+            catch {
+                return res.json({ errors: ['Invocador não esta em partida'] });
+            }
         });
     }
     static async getSummonerId(summoner, region) {
@@ -52,7 +64,12 @@ class SummonerFinder {
             }
         });
         const findSummonerData = findSummoner.data;
-        return findSummonerData.id;
+        const summonerId = {
+            id: findSummonerData.id,
+            name: findSummonerData.name,
+            profileIcon: findSummonerData.profileIconId
+        };
+        return summonerId;
     }
     static async getSummonerInfo(summonerId, region) {
         const summonerStats = await axios_1.default.get(`https://${region.toLowerCase()}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`, {

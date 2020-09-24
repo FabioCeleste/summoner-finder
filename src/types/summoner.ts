@@ -30,8 +30,17 @@ export interface MatchSummoner {
     championId: number
     summonerName: string
     summonerId: string
+    id: string
+    profileIconId:string,
+
 }
 
 export interface MatchInfo {
     participants: MatchSummoner[]
+}
+
+export interface SummonerId{
+    id: string
+    name: string
+    profileIconId: string
 }
