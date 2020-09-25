@@ -11,6 +11,8 @@ import { MatchInfo, SummonerBody, SummonerId, SummonerStatsData } from '../types
 import { getRepository } from 'typeorm'
 import { SummonerSpells } from '../types/spells'
 
+import { Rank } from '../entity/Rank'
+
 dotenv.config()
 
 class SummonerFinder {
@@ -24,7 +26,7 @@ class SummonerFinder {
         summoner: summonerId,
         ranked: arrayElo
       })
-    } catch {
+    } catch (e) {
       return res.json({ errors: ['Invocador não encontrado'] })
     }
   }
@@ -44,16 +46,21 @@ class SummonerFinder {
         for (const summoner of match.participants) {
           const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region)
           const champion = await SummonerFinder.getChampion(summoner.championId)
+          const championImage = `${process.env.URL}/champion/${champion?.fullImage}`
+          const spell1 = spellsObj[summoner.spell1Id.toString()]
+          const spell2 = spellsObj[summoner.spell2Id.toString()]
+          const spellone = `${process.env.URL}/spells/${spell1.image.full}`
+          const spelltwo = `${process.env.URL}/spells/${spell2.image.full}`
 
           results.push({
             id: summoner.id,
-            profileIconId: summoner.profileIconId,
+            profileIconId: `${process.env.URL}/profileicon/${summoner.profileIconId}.png`,
             summonerName: summoner.summonerName,
             team: summoner.teamId,
-            spell1: spellsObj[summoner.spell1Id.toString()],
-            spell2: spellsObj[summoner.spell2Id.toString()],
+            spell1: spellone,
+            spell2: spelltwo,
             ranked: find,
-            champion
+            champion: championImage
           })
         }
         return res.json({ results })
@@ -74,7 +81,7 @@ class SummonerFinder {
     const summonerId = {
       id: findSummonerData.id,
       name: findSummonerData.name,
-      profileIcon: findSummonerData.profileIconId
+      profileIcon: `${process.env.URL}/profileicon/${findSummonerData.profileIconId}.png`
     }
 
     return summonerId
@@ -90,16 +97,26 @@ class SummonerFinder {
 
     const arrayElo: SummonerStatsData[] = []
     arrayElo.pop()
-    summonerStatsData.map(queue => {
+    summonerStatsData.map(async queue => {
       arrayElo.push({
         queueType: queue.queueType,
         tier: queue.tier,
         rank: queue.rank,
         leaguePoints: queue.leaguePoints,
         wins: queue.wins,
-        losses: queue.losses
+        losses: queue.losses,
+        image: ''
       })
     })
+    for (const elo of arrayElo) {
+      async function getData () {
+        const imagename = await getRepository(Rank).findOne({ where: { searchname: elo.tier } })
+        if (typeof imagename?.filename === 'string') {
+          elo.image = `${process.env.URL}/rankedEmblems/${imagename.filename}`
+        }
+      }
+      await getData()
+    }
     return arrayElo
   }
 

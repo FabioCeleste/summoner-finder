@@ -16,5 +16,6 @@ module.exports = {
   },
 
   rules: {
+    'no-inner-declarations': 0
   }
 }

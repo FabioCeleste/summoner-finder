@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { createConnection } from 'typeorm'
+import { resolve } from 'path'
 
 import userRoutes from './routes/userRoutes'
 import tokenRoutes from './routes/tokenRoutes'
@@ -19,6 +20,7 @@ class App {
       this.express = express()
       this.middlewares()
       this.routes()
+      this.express.use(express.static(resolve(__dirname, '..', 'uploads')))
     }
 
     private middlewares (): void {

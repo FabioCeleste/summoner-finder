@@ -16,6 +16,7 @@ export interface SummonerStatsData {
     leaguePoints: number
     wins: number
     losses: number
+    image: string
 }
 
 export interface SummonerBody {

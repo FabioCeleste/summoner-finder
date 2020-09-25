@@ -7,7 +7,7 @@ import { resolve } from 'path'
 
 class ChampController {
   async champs1 (req: Request, res: Response) {
-    fs.readFile(resolve(__dirname, '..', 'data', 'champs1.json'), (err, data) => {
+    fs.readFile(resolve(__dirname, '..', 'data', 'champs5.json'), (err, data) => {
       if (err) return console.log(err)
       const stringData = data.toString()
       const arrayChampions: ChampType[] = JSON.parse(stringData)
