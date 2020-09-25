@@ -9,6 +9,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const fs_1 = __importDefault(require("fs"));
 const Champions_1 = require("../entity/Champions");
 const typeorm_1 = require("typeorm");
+const Rank_1 = require("../entity/Rank");
 dotenv_1.default.config();
 class SummonerFinder {
     async show(req, res) {
@@ -21,7 +22,7 @@ class SummonerFinder {
                 ranked: arrayElo
             });
         }
-        catch {
+        catch (e) {
             return res.json({ errors: ['Invocador não encontrado'] });
         }
     }
@@ -39,15 +40,20 @@ class SummonerFinder {
                 for (const summoner of match.participants) {
                     const find = await SummonerFinder.getSummonerInfo(summoner.summonerId, region);
                     const champion = await SummonerFinder.getChampion(summoner.championId);
+                    const championImage = `${process.env.URL}/champion/${champion === null || champion === void 0 ? void 0 : champion.fullImage}`;
+                    const spell1 = spellsObj[summoner.spell1Id.toString()];
+                    const spell2 = spellsObj[summoner.spell2Id.toString()];
+                    const spellone = `${process.env.URL}/spells/${spell1.image.full}`;
+                    const spelltwo = `${process.env.URL}/spells/${spell2.image.full}`;
                     results.push({
                         id: summoner.id,
-                        profileIconId: summoner.profileIconId,
+                        profileIconId: `${process.env.URL}/profileicon/${summoner.profileIconId}.png`,
                         summonerName: summoner.summonerName,
                         team: summoner.teamId,
-                        spell1: spellsObj[summoner.spell1Id.toString()],
-                        spell2: spellsObj[summoner.spell2Id.toString()],
+                        spell1: spellone,
+                        spell2: spelltwo,
                         ranked: find,
-                        champion
+                        champion: championImage
                     });
                 }
                 return res.json({ results });
@@ -67,7 +73,7 @@ class SummonerFinder {
         const summonerId = {
             id: findSummonerData.id,
             name: findSummonerData.name,
-            profileIcon: findSummonerData.profileIconId
+            profileIcon: `${process.env.URL}/profileicon/${findSummonerData.profileIconId}.png`
         };
         return summonerId;
     }
@@ -80,16 +86,26 @@ class SummonerFinder {
         const summonerStatsData = summonerStats.data;
         const arrayElo = [];
         arrayElo.pop();
-        summonerStatsData.map(queue => {
+        summonerStatsData.map(async (queue) => {
             arrayElo.push({
                 queueType: queue.queueType,
                 tier: queue.tier,
                 rank: queue.rank,
                 leaguePoints: queue.leaguePoints,
                 wins: queue.wins,
-                losses: queue.losses
+                losses: queue.losses,
+                image: ''
             });
         });
+        for (const elo of arrayElo) {
+            async function getData() {
+                const imagename = await typeorm_1.getRepository(Rank_1.Rank).findOne({ where: { searchname: elo.tier } });
+                if (typeof (imagename === null || imagename === void 0 ? void 0 : imagename.filename) === 'string') {
+                    elo.image = `${process.env.URL}/rankedEmblems/${imagename.filename}`;
+                }
+            }
+            await getData();
+        }
         return arrayElo;
     }
     static async getMatch(summonerId, region) {

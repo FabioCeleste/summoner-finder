@@ -9,7 +9,7 @@ const typeorm_1 = require("typeorm");
 const path_1 = require("path");
 class ChampController {
     async champs1(req, res) {
-        fs_1.default.readFile(path_1.resolve(__dirname, '..', 'data', 'champs1.json'), (err, data) => {
+        fs_1.default.readFile(path_1.resolve(__dirname, '..', 'data', 'champs5.json'), (err, data) => {
             if (err)
                 return console.log(err);
             const stringData = data.toString();

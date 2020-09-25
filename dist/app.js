@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const typeorm_1 = require("typeorm");
+const path_1 = require("path");
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const tokenRoutes_1 = __importDefault(require("./routes/tokenRoutes"));
 const summonerRoutes_1 = __importDefault(require("./routes/summonerRoutes"));
@@ -19,6 +20,7 @@ class App {
         this.express = express_1.default();
         this.middlewares();
         this.routes();
+        this.express.use(express_1.default.static(path_1.resolve(__dirname, '..', 'uploads')));
     }
     middlewares() {
         this.express.use(express_1.default.json());
