@@ -23,6 +23,14 @@ __decorate([
     __metadata("design:type", String)
 ], Summoner.prototype, "summoner", void 0);
 __decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Summoner.prototype, "profileicon", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Summoner.prototype, "region", void 0);
+__decorate([
     typeorm_1.ManyToOne(type => Users_1.Users, users => users.summoner),
     __metadata("design:type", Users_1.Users)
 ], Summoner.prototype, "users", void 0);

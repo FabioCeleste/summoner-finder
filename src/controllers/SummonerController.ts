@@ -6,10 +6,10 @@ import { SummonerType } from '../types/summoner'
 
 class SummonerController {
   async store (req: Request, res: Response) {
-    const { summoner } = req.body as SummonerType
+    const { summoner, profileicon, region } = req.body as SummonerType
 
     const user = await getRepository(Users).findOne(req.userId)
-    const summonerSave = await getRepository(Summoner).save({ summoner: summoner, users: user })
+    const summonerSave = await getRepository(Summoner).save({ summoner: summoner, profileicon, region, users: user })
     res.json(summonerSave)
   }
 
@@ -17,6 +17,16 @@ class SummonerController {
     const user = await getRepository(Users).findOne(req.userId, { relations: ['summoner'] })
     const summoners = user?.summoner
     return res.json({ summoners })
+  }
+
+  async delete (req: Request, res:Response) {
+    const user = await getRepository(Users).findOne(req.userId)
+    const summoner = await getRepository(Summoner).delete({ summoner: req.body.summoner, users: user })
+    if (summoner.affected) {
+      res.json({ delete: true })
+    } else {
+      res.json({ delete: false })
+    }
   }
 }
 

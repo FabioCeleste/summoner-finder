@@ -9,6 +9,12 @@ export class Summoner {
     @Column()
     summoner!: string
 
+    @Column()
+    profileicon!: string
+
+    @Column()
+    region!: string
+
     @ManyToOne(type => Users, users => users.summoner)
     users!: Users
 }

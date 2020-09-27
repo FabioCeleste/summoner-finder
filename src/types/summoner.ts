@@ -2,6 +2,8 @@ import { RegionsType } from './regions'
 
 export interface SummonerType {
     summoner:string
+    profileicon:string
+    region: string
 }
 
 export interface FindSummoner {
